@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { forwardRef } from "react";
 import { X } from "lucide-react";
 import z from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const taskSchema = z.object({
   title: z.string().nonempty("É obrigatório a tarefa ter um titulo!"),
@@ -18,6 +18,7 @@ type TaskSchema = z.infer<typeof taskSchema>;
 
 const CreateTaskDialog = forwardRef<HTMLDialogElement>((_, ref) => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const queryClient = useQueryClient();
   const createTask = useMutation({
     mutationFn: async (task: Task) => {
       const response = await fetch(`${API_URL}/tasks`, {
@@ -28,9 +29,11 @@ const CreateTaskDialog = forwardRef<HTMLDialogElement>((_, ref) => {
         body: JSON.stringify(task),
       });
       if (response.ok) {
-        console.log("criado");
         reset();
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get-tasks"] });
     },
   });
   function toggleDialog() {
