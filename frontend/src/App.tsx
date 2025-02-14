@@ -28,7 +28,7 @@ function App() {
           </button>
           <CreateTaskDialog ref={dialogRef} />
         </div>
-        <div className="flex gap-12">
+        <div className="flex items-center gap-12">
           <TaskColumn title="Pendente" status={TasksEnum.Pending} />
           <TaskColumn title="Em Andamento" status={TasksEnum.InProgress} />
           <TaskColumn title="Feito" status={TasksEnum.Done} />
